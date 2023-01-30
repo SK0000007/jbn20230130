@@ -56,7 +56,7 @@ ALL_EDIT_BTN.click()
 time.sleep(0.3)
 
 # 編集画面でworkday_listに格納された日付の数だけ作業を繰り返す
-for day in Cworkday_list:
+for day in workday_list:
     # 勤務パターン選択
     JOB_P_DROP = driver.find_element_by_xpath(
         #   /html/body/div[1]/div[2]/div/div/div/div[2]/div/form/table/tbody/tr[3]/td[3]/select こうなってほしい
