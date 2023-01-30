@@ -1,12 +1,8 @@
 from selenium import webdriver
-from dateEdit import * # 本来入力する数字等は全て別ファイル(user_data.py)へまとめ
 from selenium.webdriver.support.select import Select # ドロップダウンリストの選択肢を触るためのSelectをimport、勤務パターン、種別選択の時に必要
 import tkinter as tk
 from datetime import datetime, timedelta
-import calendar, jpholiday
-import time
-
-# import autoLogin ##tkinterのウインドウで実行ボタン押したときに走るようにする時にimport必要
+import calendar, jpholiday, time
 
 # ログイン情報
 mail = 'kazama@jibun-note.co.jp'
@@ -20,6 +16,7 @@ job_time_lsit = ['8:30', '12:00', '13:00', '17:30']
 today = datetime.today().date()
 y = today.year
 m = today.month
+check_list = []
 ###メソッド###
 ###特定の日付の日を1にリプレイス###
 def get_first_date(dt):
@@ -73,16 +70,32 @@ for i in range(len(chk_txt)):
     if text in workday_list: #全ての日(text=all_date_list)と出勤日(workday_list)を比較
         chk.select() #全てチェックON
     
-    
 # ボタンクリックイベント(チェック有無をセット)
 def btn_click(bln):
     for i in range(len(chk_bln)):
         chk_bln[i].set(bln)
 #ウインドウを閉じる        
 def close_window():
-    window.destroy()
-    # window.quit()
-    # exit()        
+    # window.destroy()
+    window.quit()
+    # exit()     
+
+def get_check_list():
+    #チェックリストへonとoffをappendする   
+    for i in all_date_list:
+        x =chk_bln[i].get()
+        if(x == True):
+            check_list.append(i)
+    return check_list        
+        
+    new_list = dict(zip(all_date_list, check_list))#日付と:true or false
+    #もしtrueだったらリストへ格納に変える
+                    
+    ###チェックボックスの状態をリストへ格納する
+    ###all_date_listをキー、onoffをバリューにした辞書型listを作成
+    #new_list = {}
+    #for i in 
+    ###       
 
 #チェックボックスオプションURL
 #https://kuroro.blog/python/gspi4F2pMIkzHN7l0f1F/
@@ -100,8 +113,7 @@ exe_button.pack(side=tk.BOTTOM, pady=20) #実行ボタン表示反映
 window.mainloop()
 
 
-
-
+get_check_list()
 
 driver = webdriver.Chrome() # Seleniumを使ってGoogle Chromeを起動
 driver.get("https://attendance.moneyforward.com/my_page") # URLへアクセス
@@ -147,7 +159,7 @@ ALL_EDIT_BTN.click()
 time.sleep(0.3)
 
 # 編集画面でworkday_listに格納された日付の数だけ作業を繰り返す
-for day in workday_list:
+for day in check_list:
     # 勤務パターン選択
     JOB_P_DROP = driver.find_element_by_xpath(
         f'/html/body/div[1]/div[2]/div/div/div/div[2]/div/form/table/tbody/tr[{day}]/td[3]/select')
@@ -173,7 +185,6 @@ for day in workday_list:
 SAVE_BTN = driver.find_element_by_xpath(
     '/html/body/div[1]/div[2]/div/div/div/div[2]/div/form/div[2]/div/div/div[2]/input[2]')
 SAVE_BTN.click()
-
 
 # 基本的な作業手順#
 # 要素のXpath取得は操作したいサイトでCtrl+shift+C→操作したい要素を選択→要素タブの・・・を押してコピーからXpathをコピーし.find_element_by_xpathの（""）内へ貼り付ける
