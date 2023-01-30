@@ -3,10 +3,10 @@ from datetime import datetime, timedelta
 # import datetime
 import calendar, jpholiday
 # import pandas
-# import main ##tkinterのウインドウで実行ボタン押したときに走るようにする時にimport必要
+import main ##tkinterのウインドウで実行ボタン押したときに走るようにする時にimport必要
 
 # ログイン情報
-mail = '@jibun-note.co.jp'
+mail = ''
 password = ''
 # 出勤日
 workday_list = []
@@ -55,8 +55,8 @@ dns_date_list=get_dns_date_list_dates(y,m)#ｙとｍにはデフォで今月が�
 workday_list = sorted(list(set(all_date_list) ^ set(dns_date_list)))
 workday_list = refac_list(workday_list) #先頭０なしのLISTへ変換
 all_date_list = refac_list(all_date_list) #先頭０なしのLISTへ変換
-print(workday_list)
-print(all_date_list)
+# print(workday_list)
+# print(all_date_list)
 
 
 # #先頭の0を消すメソッドremoveZero
@@ -124,9 +124,9 @@ def btn_click(bln):
 
 
 # # 　実行ボタン
-# exe_button = tk.Button(window,command=main, text="実行", font=("MSゴシック", "10", "bold"))
+exe_button = tk.Button(window,command=main, text="実行", font=("MSゴシック", "10", "bold"))
 # exe_button = tk.Button(text="実行", command=lambda:main("ここへ受け渡すデータを入れるlist？"))
-exe_button = tk.Button(text="実行",font=("MSゴシック", "10", "bold"))#仮設置
+# exe_button = tk.Button(text="実行",font=("MSゴシック", "10", "bold"))#仮設置
 
 
 #.pack()コーナー画面描画の締めの手続き
@@ -138,7 +138,7 @@ label.pack() #今日の日付の表示反映
 exe_button.pack(side=tk.BOTTOM, pady=20) #実行ボタン表示反映
 
 window.mainloop()
-btn_click(0)
+# btn_click(0)
 
 # # スクロールバー関連開始
 # # メインフレームの作成と設置
