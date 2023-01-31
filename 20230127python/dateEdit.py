@@ -1,5 +1,5 @@
 from selenium import webdriver
-from selenium.webdriver.support.select import Select # ドロップダウンリストの選択肢を触るためのSelectをimport、勤務パターン、種別選択の時に必要
+from selenium.webdriver.support.select import Select 
 import tkinter as tk
 from datetime import datetime, timedelta
 import calendar, jpholiday, time
@@ -7,8 +7,6 @@ import calendar, jpholiday, time
 # ログイン情報
 mail = 'kazama@jibun-note.co.jp'
 password = 'kazama007'
-# # 出勤日
-# workday_list = []
 
 # 勤務時間の区切り時間
 job_time_lsit = ['8:30', '12:00', '13:00', '17:30']
@@ -18,7 +16,7 @@ y = today.year
 m = today.month
 check_list = []
 ###メソッド###
-###特定の日付の日を1にリプレイス###
+###特定の日付の日を1にリプレイス(その月の1日を返す)###
 def get_first_date(dt):
     return dt.replace(day=1)
 
@@ -33,33 +31,34 @@ def get_dns_date_list_dates(y, m):
     dns_date_list = sorted(list(set(holidays + donichi)), key=lambda d: d.day)
     return dns_date_list
 
-#受け取った日付リストの日だけをリストへ入れなおすメソッド(年月の情報削除して日の数字だけのリストにする)
+#受け取った日付リストの日だけをlistへで返すメソッド(2023-01-12 →　12)
 def refac_list(l):
     for i in range(len(l)):
         # print(i.day)
         l[i] = l[i].day
     return l
 
-# 今月の全日付のリスト生成()　任意の月の日数を取得calendar.monthrange(y, m)[1]
+# 今月の全日付のリスト生成()　任意の月の日数を取得calendar.monthrange(y, m)[1]#ｙとｍにはデフォで今月が入る
 all_date_list = [get_first_date(today) + timedelta(days=i) for i in range(calendar.monthrange(y, m)[1])]
 #今月の土日祝のリスト
-dns_date_list=get_dns_date_list_dates(y,m)#ｙとｍにはデフォで今月が入る
+dns_date_list=get_dns_date_list_dates(y,m) #ｙとｍにはデフォで今月が入る
 
-workday_list = sorted(list(set(all_date_list) ^ set(dns_date_list)))
-workday_list = refac_list(workday_list) #先頭０なしのLISTへ変換
-all_date_list = refac_list(all_date_list) #先頭０なしのLISTへ変換
+workday_list = sorted(list(set(all_date_list) ^ set(dns_date_list))) #出勤日リスト
 
-###画面に描画するtkinterの記述###
+workday_list = refac_list(workday_list) #先頭０なしのLISTへ変換 [2,3,9,10....]
+all_date_list = refac_list(all_date_list) #先頭０なしのLISTへ変換 [1,2,3,4,5,6,7,8,9,10....]
+dns_date_list =refac_list(dns_date_list) #使ってないけど一応同様の変換しとく
+
+###tkinterの記述GUI###
 window = tk.Tk()
 window.geometry("300x850")
 window.title("楽々勤怠入力")
 # ラベル
-label = tk.Label(text=f"今日は{today}")
+label = tk.Label(text=f"本日は{today}です")
 # チェックボタンのラベルをリスト化する
 chk_txt = all_date_list
 # チェックボックスON/OFFの状態
 chk_bln = {}
-
 # チェックボタンを動的に作成して配置
 for i in range(len(chk_txt)):
     text = chk_txt[i] #yyy-mm-ddのデータ
@@ -74,46 +73,41 @@ for i in range(len(chk_txt)):
 def btn_click(bln):
     for i in range(len(chk_bln)):
         chk_bln[i].set(bln)
+
 #ウインドウを閉じる        
 def close_window():
-    # window.destroy()
-    window.quit()
-    # exit()     
-
+    get_check_list()
+    time.sleep(0.3)
+    window.destroy()
+    # window.quit()
+    
+#チェックのOnOffをチェックしてリストへonの日付けを格納する関数
 def get_check_list():
-    #チェックリストへonとoffをappendする   
     for i in all_date_list:
+        i = i-1 #1から始まるから0にする
         x =chk_bln[i].get()
         if(x == True):
-            check_list.append(i)
-    return check_list        
-        
-    new_list = dict(zip(all_date_list, check_list))#日付と:true or false
-    #もしtrueだったらリストへ格納に変える
-                    
-    ###チェックボックスの状態をリストへ格納する
-    ###all_date_listをキー、onoffをバリューにした辞書型listを作成
-    #new_list = {}
-    #for i in 
-    ###       
+            check_list.append(i+1) #i-1をなかったことにする  
+    return check_list          
 
-#チェックボックスオプションURL
-#https://kuroro.blog/python/gspi4F2pMIkzHN7l0f1F/
 
-# # 　実行ボタン
+#　実行ボタン
 exe_button = tk.Button(window, command=close_window, text="実行する", font=("MSゴシック", "8", "bold"))
-# exe_button = tk.Button(window, command=close_window, text="実行する", font=("MSゴシック", "8", "bold"))
-# exe_button = tk.Button(window, command=lambda:[autoLogin(), quite_window()], text="実行する", font=("MSゴシック", "8", "bold"))
-# exe_button = tk.Button(text="実行", command=lambda:main("ここへ受け渡すデータを入れるlist？"))
-# exe_button = tk.Button(text="実行",font=("MSゴシック", "10", "bold"))#仮設置
 
 label.pack() #今日の日付の表示反映
 exe_button.pack(side=tk.BOTTOM, pady=20) #実行ボタン表示反映
 
+print(f"全日付＝{all_date_list}")
+print(f"出勤日＝{workday_list}")
+print(f"土日祝＝{dns_date_list}")
+
 window.mainloop()
 
+print("#################################################################################")
+print("####################################実行#########################################")
+print("#################################################################################")
+print(f"チェックした日付＝{check_list}")
 
-get_check_list()
 
 driver = webdriver.Chrome() # Seleniumを使ってGoogle Chromeを起動
 driver.get("https://attendance.moneyforward.com/my_page") # URLへアクセス
