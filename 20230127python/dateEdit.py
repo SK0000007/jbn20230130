@@ -5,8 +5,8 @@ from datetime import datetime, timedelta
 import calendar, jpholiday, time
 
 # ログイン情報
-mail = 'kazama@jibun-note.co.jp'
-password = 'kazama007'
+mail = '@jibun-note.co.jp'
+password = ''
 
 # 勤務時間の区切り時間
 job_time_lsit = ['8:30', '12:00', '13:00', '17:30']
